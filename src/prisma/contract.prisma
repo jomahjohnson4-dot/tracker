@@ -1,0 +1,33 @@
+// use prisma-8
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String?
+  habits    Habit[]
+  createdAt temporal.createdAt()
+  updatedAt temporal.updatedAt()
+}
+
+model Habit {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  userId      Int
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  logs        HabitLog[]
+  createdAt   temporal.createdAt()
+  updatedAt   temporal.updatedAt()
+}
+
+model HabitLog {
+  id        Int      @id @default(autoincrement())
+  completed Boolean  @default(false)
+  date      DateTime
+  habitId   Int
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  createdAt temporal.createdAt()
+
+  @@unique([habitId, date])
+}
